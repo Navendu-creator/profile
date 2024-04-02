@@ -1,15 +1,6 @@
-
-
-
-
-
-
-#!/bin/bash
-cd /var/www/html/
-npm install
-npm install -g pm2
-npm run build
-
+ - location: scripts/after_install.sh
+      timeout: 2000
+      runas: root
 
 
 
