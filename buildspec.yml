@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - npm install  # Install project dependencies
+
+  build:
+    commands:
+      - npm run build  # Run any build scripts if necessary
+
+artifacts:
+  files:
+    - '**/*'  # Include all files in the artifact
+    - '!node_modules/**'  # Exclude node_modules directory from the artifact
+    - '!*.md'  # Exclude Markdown files from the artifact
+    - '!Dockerfile.txt'  # Exclude Dockerfile from the artifact
+    - '!*.gitignore'  # Exclude .gitignore file from the artifact
+    - '!package-lock.json'  # Exclude package-lock.json file from the artifact
+    - '!package.json'  # Exclude package.json file from the artifact
