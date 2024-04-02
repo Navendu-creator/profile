@@ -1,3 +1,8 @@
 #!/bin/bash
+
+# Update package lists
 apt-get update -y
-apt install nodejs
+
+# Install Node.js
+apt-get install nodejs -y
+
