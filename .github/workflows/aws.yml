@@ -44,8 +44,9 @@ jobs:
       env:
        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
        IMAGE_TAG: ${{ github.sha }}
-      run: |
-       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . && \
-       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
-       echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" && \
-       aws ecs update-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --container-definitions '[{"name":"${{ env.CONTAINER_NAME }}","image":"${{ steps.build-image.outputs.image }}"}]'
+       run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . && \
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" && \
+        aws ecs register-task-definition --family $ECS_TASK_DEFINITION --container-definitions file://task-definition.json && \
+        aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
