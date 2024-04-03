@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: myfront_endimage
+  ECR_REPOSITORY: front_endimage
   ECS_SERVICE: MY_ECS_SERVICE
   ECS_CLUSTER: MY_ECS_CLUSTER
   ECS_TASK_DEFINITION: myfront_endtask.json
