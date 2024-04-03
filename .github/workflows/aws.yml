@@ -53,4 +53,5 @@ jobs:
         - echo Writing image definitions file...
        - printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > front_endimage.json
        artifacts:
-        files: front_endimage.json
+        files: 
+         - front_endimage.json
