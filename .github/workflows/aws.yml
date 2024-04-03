@@ -51,7 +51,7 @@ jobs:
        - docker push $REPOSITORY_URI:latest
        - docker push $REPOSITORY_URI:$IMAGE_TAG
         - echo Writing image definitions file...
-       - printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > front_endimage.json
+       - printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
        artifacts:
         files: 
-         - front_endimage.json
+         - imagedefinitions.json
