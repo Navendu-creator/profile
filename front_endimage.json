@@ -1,0 +1,60 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: front_endimage
+  ECS_SERVICE: MY_ECS_SERVICE
+  ECS_CLUSTER: MY_ECS_CLUSTER
+  ECS_TASK_DEFINITION: front_endtask.json
+  CONTAINER_NAME: myimage
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Build Docker image
+      run: docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} -f Dockerfile .
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Push image to Amazon ECR and update ECS task definition
+      id: push-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        echo Pushing the Docker images...
+        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}
+
+    - name: Write image definitions file
+      run: |
+        printf '[{"name":"${CONTAINER_NAME}","imageUri":"%s"}]' $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${{ steps.push-image.outputs.IMAGE_TAG }} > front_endimage.json
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: front_endimage
+        path: front_endimage.json
