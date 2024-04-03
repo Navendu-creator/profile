@@ -33,7 +33,9 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Build Docker image
-      run: docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} -f Dockerfile .
+      run: |
+        docker build -t $ECR_REPOSITORY:${{ github.sha }} -f Dockerfile .
+        docker tag $ECR_REPOSITORY:${{ github.sha }} $ECR_REPOSITORY:latest
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -45,10 +47,12 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         echo Pushing the Docker images...
-        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
-        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}
-        echo Writing image definitions file...
-        printf '[{"name":"myimage","imageUri":"%s"}]' $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG} > front_endimage.json
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}:latest
+        docker push $ECR_REGISTRY/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+    - name: Write image definitions file
+      run: |
+        printf '[{"name":"${CONTAINER_NAME}","imageUri":"%s"}]' $ECR_REGISTRY/${ECR_REPOSITORY}:${IMAGE_TAG} > front_endimage.json
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
