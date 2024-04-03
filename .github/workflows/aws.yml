@@ -48,5 +48,4 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . && \
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" && \
-        aws ecs register-task-definition --family $ECS_TASK_DEFINITION --container-definitions file://task-definition.json && \
-        aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
+        aws ecs update-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --container-definitions '[{"name":"${{ env.CONTAINER_NAME }}","image":"${{ steps.build-image.outputs.image }}"}]'
