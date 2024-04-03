@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: front_endimage
   ECS_SERVICE: MY_ECS_SERVICE
   ECS_CLUSTER: MY_ECS_CLUSTER
-  ECS_TASK_DEFINITION: myfront_endtask.json
+  ECS_TASK_DEFINITION: front_endtask.json
   CONTAINER_NAME: myimage
 
 permissions:
