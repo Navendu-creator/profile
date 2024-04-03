@@ -1,23 +1,17 @@
 version: 0.2
 
-
 phases:
   install:
     runtime-versions:
-      nodejs: 18
-    commands:
-      - npm install  # Install project dependencies
-
+      docker: 18
   build:
     commands:
-      - npm run build  # Run any build scripts if necessary
+      - docker build -t 058264235185.dkr.ecr.us-east-1.amazonaws.com/front_endimage:latest .
+      - docker tag 058264235185.dkr.ecr.us-east-1.amazonaws.com/front_endimage:latest 058264235185.dkr.ecr.us-east-1.amazonaws.com/myfront_endimage:latest
+      - $(aws ecr get-login --no-include-email --region us-east-1)
+      - docker push 058264235185.dkr.ecr.us-east-1.amazonaws.com/myfront_endimage:latest
+      - echo "{\"name\": \"my-container\", \"imageUri\": \"058264235185.dkr.ecr.us-east-1.amazonaws.com/myfront_endimage:latest\"}" > imagedefinitions.json
 
 artifacts:
   files:
-    - '**/*'  # Include all files in the artifact
-    - '!node_modules/**'  # Exclude node_modules directory from the artifact
-    - '!*.md'  # Exclude Markdown files from the artifact
-    - '!Dockerfile.txt'  # Exclude Dockerfile from the artifact
-    - '!*.gitignore'  # Exclude .gitignore file from the artifact
-    - '!package-lock.json'  # Exclude package-lock.json file from the artifact
-    - '!package.json'  # Exclude package.json file from the artifact
+    - imagedefinitions.json
