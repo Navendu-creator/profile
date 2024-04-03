@@ -5,14 +5,12 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: us-east-1                 # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: fornt_endimage          # set this to your Amazon ECR repository name
-  ECS_SERVICE: MY_ECS_SERVICE                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: MY_ECS_CLUSTER                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+  AWS_REGION: us-east1
+  ECR_REPOSITORY: myfront_endimage
+  ECS_SERVICE: MY_ECS_SERVICE
+  ECS_CLUSTER: MY_ECS_CLUSTER
+  ECS_TASK_DEFINITION: myfront_endtask.json
+  CONTAINER_NAME: myimage
 
 permissions:
   contents: read
@@ -33,6 +31,9 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+
+    - name: Build Docker image
+      run: docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
 
     - name: Login to Amazon ECR
       id: login-ecr
