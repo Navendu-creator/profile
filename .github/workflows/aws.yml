@@ -47,11 +47,11 @@ jobs:
       run: |
 
       
-       - echo Pushing the Docker images...
-       - docker push $REPOSITORY_URI:latest
-       - docker push $REPOSITORY_URI:$IMAGE_TAG
-        - echo Writing image definitions file...
-       - printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-       artifacts:
-        files: 
-         - imagedefinitions.json
+        echo Pushing the Docker images...
+          docker push $REPOSITORY_URI:latest
+          docker push $REPOSITORY_URI:$IMAGE_TAG
+          echo Writing image definitions file...
+          printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > front_endimage.json
+        artifacts:
+          files:
+            - front_endimage.json
