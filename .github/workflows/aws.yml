@@ -32,6 +32,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    - name: Get ECR login password and login
+      run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 058264235185.dkr.ecr.us-east-1.amazonaws.com/front_endimage
+
     - name: Build Docker image
       run: docker build -t ${{ env.ECR_REPOSITORY }}:${{ github.sha }} -f Dockerfile .
 
@@ -45,13 +48,14 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-
-      
         echo Pushing the Docker images...
-          docker push $REPOSITORY_URI:latest
-          docker push $REPOSITORY_URI:$IMAGE_TAG
-          echo Writing image definitions file...
-          printf '[{"name":"myimage","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > front_endimage.json
-        artifacts:
-          files:
-            - front_endimage.json
+        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
+        docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}
+        echo Writing image definitions file...
+        printf '[{"name":"${CONTAINER_NAME}","imageUri":"%s"}]' $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG} > front_endimage.json
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: front_endimage
+        path: front_endimage.json
