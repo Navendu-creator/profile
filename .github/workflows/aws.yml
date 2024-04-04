@@ -12,6 +12,7 @@ env:
   ECS_TASK_DEFINITION: front_endtask.json
   CONTAINER_NAME: myimage
 
+
 permissions:
   contents: read
 
