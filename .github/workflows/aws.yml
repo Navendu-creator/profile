@@ -37,6 +37,7 @@ jobs:
       run: |
         docker build -t $ECR_REPOSITORY:${{ github.sha }} -f Dockerfile .
         docker tag $ECR_REPOSITORY:${{ github.sha }} $ECR_REPOSITORY:latest
+        
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -44,7 +45,9 @@ jobs:
 
     - name: Push image to Amazon ECR
       run: |
-        echo Pushing the Docker images...
+        echo "ECR_REGISTRY: $ECR_REGISTRY"
+        echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+        echo "Pushing the Docker images..."
         docker push $ECR_REGISTRY/${ECR_REPOSITORY}:latest
        
     - name: Update ECS service
