@@ -45,8 +45,7 @@ jobs:
 
     - name: Push image to Amazon ECR
       run: |
-        echo "ECR_REGISTRY: $ECR_REGISTRY"
-        echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+       
         echo "Pushing the Docker images..."
         docker push $ECR_REGISTRY/${ECR_REPOSITORY}:latest
        
