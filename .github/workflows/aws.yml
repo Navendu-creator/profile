@@ -6,6 +6,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  ECR_REGISTRY: Private registry
   ECR_REPOSITORY: front_endimage
   ECS_SERVICE: front_endimage
   ECS_CLUSTER: front_endimage
