@@ -7,11 +7,10 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: front_endimage
-  ECS_SERVICE: MY_ECS_SERVICE
-  ECS_CLUSTER: MY_ECS_CLUSTER
+  ECS_SERVICE: front_endimage
+  ECS_CLUSTER: front_endimage
   ECS_TASK_DEFINITION: front_endtask.json
   CONTAINER_NAME: myimage
-
 
 permissions:
   contents: read
@@ -42,21 +41,16 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Push image to Amazon ECR and update ECS task definition
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
+    - name: Push image to Amazon ECR
       run: |
         echo Pushing the Docker images...
         docker push $ECR_REGISTRY/${ECR_REPOSITORY}:latest
         docker push $ECR_REGISTRY/${ECR_REPOSITORY}:${IMAGE_TAG}
 
-    - name: Write image definitions file
+    - name: Update ECS task definition
       run: |
-        printf '[{"name":"${CONTAINER_NAME}","imageUri":"%s"}]' $ECR_REGISTRY/${ECR_REPOSITORY}:${IMAGE_TAG} > front_endimage.json
+        aws ecs register-task-definition --cli-input-json file://front_endtask.json
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: front_endimage
-        path: front_endimage.json
+    - name: Update ECS service
+      run: |
+        aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_TASK_DEFINITION
