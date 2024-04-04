@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REGISTRY: Private registry
-  ECR_REPOSITORY: docker tag front_endimage:latest 058264235185.dkr.ecr.us-east-1.amazonaws.com/front_endimage:latest
+  ECR_REPOSITORY: front_endimage
   ECS_SERVICE: front_endimage
   ECS_CLUSTER: front_endimage
   ECS_TASK_DEFINITION: front_endtask.json
